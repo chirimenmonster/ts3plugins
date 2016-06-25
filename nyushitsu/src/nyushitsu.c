@@ -12,9 +12,7 @@
 #include "ts3_functions.h"
 #include "nyushitsu.h"
 
-SOCKET sock;
-
-#define LOG_PLUGIN_NAME "Nyushitsu Plugin"
+static SOCKET sock;
 
 /* 棒読みちゃんへ接続する */
 int bouyomi_connect(void) {
@@ -45,7 +43,7 @@ int bouyomi_connect(void) {
 			printf("WSAEFAULT\n");
 			break;
 		}
-		ts3Functions.logMessage("Error WSAStartup", LogLevel_ERROR, LOG_PLUGIN_NAME, 0);
+		ts3Functions.logMessage("Error WSAStartup", LogLevel_ERROR, PLUGIN_NAME, 0);
 		return 1;
 	}
 
@@ -55,7 +53,7 @@ int bouyomi_connect(void) {
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) {
 		snprintf(msg, sizeof(msg), "socket : %d\n", WSAGetLastError());
-		ts3Functions.logMessage(msg, LogLevel_ERROR, LOG_PLUGIN_NAME, 0);
+		ts3Functions.logMessage(msg, LogLevel_ERROR, PLUGIN_NAME, 0);
 		return 1;
 	}
 
@@ -67,7 +65,7 @@ int bouyomi_connect(void) {
 	// サーバに接続
 	if (connect(sock, (struct sockaddr *)&server, sizeof(server)) != 0) {
 		snprintf(msg, sizeof(msg), "connect : %d\n", WSAGetLastError());
-		ts3Functions.logMessage(msg, LogLevel_ERROR, "Plugin", 0);
+		ts3Functions.logMessage(msg, LogLevel_ERROR, PLUGIN_NAME, 0);
 		return 1;
 	}
 	return 0;
@@ -98,7 +96,7 @@ int bouyomi_sendMessage(const char *bMessage) {
 
 	iLength = (int)strlen(bMessage);
 	snprintf(msg, sizeof(msg), u8"send to BoyomiChan (%d): %s\n", iLength, bMessage);
-	ts3Functions.logMessage(msg, LogLevel_INFO, LOG_PLUGIN_NAME, 0);
+	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
 
 	memset(buf, 0, sizeof(buf));
 	*(u_short *)&buf[0] = iCommand; //コマンド（ 0:メッセージ読み上げ）
@@ -151,7 +149,7 @@ void nyushitsu_sendMessage(uint64 oldChannelID, uint64 newChannelID, uint64 myCh
     }
 
 	snprintf(msg, sizeof(msg), template, nickname);
-	ts3Functions.logMessage(msg, LogLevel_INFO, LOG_PLUGIN_NAME, 0);
+	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
 
 	bouyomi_sendMessage(msg);
 }
