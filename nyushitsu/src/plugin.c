@@ -59,6 +59,8 @@ static int wcharToUtf8(const wchar_t* str, char** result) {
 }
 #endif
 
+#define LOG_PLUGIN_NAME "Nyushitsu Plugin"
+
 /* 棒読みちゃんへ接続する */
 int bouyomi_connect() {
 	// 棒読みちゃんのTCPサーバへ接続
@@ -88,7 +90,7 @@ int bouyomi_connect() {
 			printf("WSAEFAULT\n");
 			break;
 		}
-		ts3Functions.logMessage("Error WSAStartup", LogLevel_ERROR, "Plugin", 0);
+		ts3Functions.logMessage("Error WSAStartup", LogLevel_ERROR, LOG_PLUGIN_NAME, 0);
 		return 1;
 	}
 
@@ -98,7 +100,7 @@ int bouyomi_connect() {
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) {
 		snprintf(msg, sizeof(msg), "socket : %d\n", WSAGetLastError());
-		ts3Functions.logMessage(msg, LogLevel_ERROR, "Plugin", 0);
+		ts3Functions.logMessage(msg, LogLevel_ERROR, LOG_PLUGIN_NAME, 0);
 		return 1;
 	}
 
@@ -141,7 +143,7 @@ int bouyomi_sendMessage(const char *bMessage) {
 
 	iLength = (int)strlen(bMessage);
 	snprintf(msg, sizeof(msg), u8"send to BoyomiChan (%d): %s\n", iLength, bMessage);
-	ts3Functions.logMessage(msg, LogLevel_INFO, "Plugin", 0);
+	ts3Functions.logMessage(msg, LogLevel_INFO, LOG_PLUGIN_NAME, 0);
 
 	memset(buf, 0, sizeof(buf));
 	*(u_short *)&buf[0] = iCommand; //コマンド（ 0:メッセージ読み上げ）
@@ -159,6 +161,45 @@ int bouyomi_sendMessage(const char *bMessage) {
 	return 0;
 }
 
+/* 読み上げメッセージを選択して送信 */
+void nyushitsu_sendMessage(uint64 oldChannelID, uint64 newChannelID, uint64 myChannelID, const char* nickname) {
+	char msg[BUFSIZ];
+	char* template;
+
+    // 接続
+    if (oldChannelID == 0) {
+        if (newChannelID == myChannelID) {
+            template = u8"%s が入室しました";		// TS3に接続して現在のチャンネルに入室            
+        }
+        else {
+			template = u8"%s が接続しました";		// TS3に接続して別のチャンネルに入室            
+        }
+    }
+    else if (oldChannelID == myChannelID) {
+        if (newChannelID == 0) {
+            template = u8"%s が切断しました";		// 現在のチャンネルから切断
+        }
+        else {
+            template = u8"%s が移動しました";		// 現在のチャンネルから別のチャンネルに移動
+        }
+    }
+    else {
+        if (newChannelID == myChannelID) {
+            template = u8"%s が入室しました";		// 別のチャンネルから現在のチャンネルに入室
+        }
+        if (newChannelID == 0) {
+            template = u8"%s が切断しました";		// 別のチャンネルから切断
+        }
+        else {
+            return;								// 他チャンネル間の移動は読み上げない
+        }        
+    }
+
+	snprintf(msg, sizeof(msg), template, nickname);
+	ts3Functions.logMessage(msg, LogLevel_INFO, LOG_PLUGIN_NAME, 0);
+
+	bouyomi_sendMessage(msg);
+}
 
 /*********************************** Required functions ************************************/
 /*
@@ -231,10 +272,6 @@ int ts3plugin_init() {
 
 	printf("PLUGIN: App path: %s\nResources path: %s\nConfig path: %s\nPlugin path: %s\n", appPath, resourcesPath, configPath, pluginPath);
 
-	// if (bouyomi_connect() != 0) {
-	// 	 return 1;
-	// }
-
     return 0;  /* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
 	/* -2 is a very special case and should only be used if a plugin displays a dialog (e.g. overlay) asking the user to disable
 	 * the plugin again, avoiding the show another dialog by the client telling the user the plugin failed to load.
@@ -245,8 +282,6 @@ int ts3plugin_init() {
 void ts3plugin_shutdown() {
     /* Your plugin cleanup code here */
     printf("PLUGIN: shutdown\n");
-
-	// bouyomi_close();
 
 	/*
 	 * Note:
@@ -837,41 +872,34 @@ void ts3plugin_onUpdateClientEvent(uint64 serverConnectionHandlerID, anyID clien
 void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, const char* moveMessage) {
 	char* nickname;
 	char msg[BUFSIZ];
-	char* template;
 	anyID myID;
 	uint64 myChannelID;
 
-	snprintf(msg, sizeof(msg), "ClientMove: clientID=%d, oldChannelID=%lld, newChannelID=%lld, visibility=%d", clientID, oldChannelID, newChannelID, visibility);
-	ts3Functions.logMessage(msg, LogLevel_INFO, "Test", serverConnectionHandlerID);
+	snprintf(msg, sizeof(msg), "ClientMoveEvent: clientID=%d, oldChannelID=%lld, newChannelID=%lld, visibility=%d", clientID, oldChannelID, newChannelID, visibility);
+	ts3Functions.logMessage(msg, LogLevel_INFO, LOG_PLUGIN_NAME, 0);
 
+    // 自分の ID を取得
 	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok) {
-		ts3Functions.logMessage("fail to getClientID", LogLevel_INFO, "Test", serverConnectionHandlerID);
+		ts3Functions.logMessage("fail to getClientID", LogLevel_INFO, LOG_PLUGIN_NAME, 0);
 		return;
 	}
+    // 現在のチャンネル ID を取得
 	if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID, &myChannelID) != ERROR_ok) {
-		ts3Functions.logMessage("fail to getChannelOfClient", LogLevel_INFO, "Test", serverConnectionHandlerID);
+		ts3Functions.logMessage("fail to getChannelOfClient", LogLevel_INFO, LOG_PLUGIN_NAME, 0);
 		return;
 	}
-	if (myChannelID == newChannelID) {
-		template = u8"%s が入室しました";
-	}
-	else if (myChannelID == oldChannelID) {
-		template = u8"%s が退室しました";
-	}
-	else {
-		template = u8"%s が退室しました";
-	}
+    
+    // 自分に関するイベントは読み上げない
+    if (clientID == myID) {
+        return;
+    }
 
 	if (ts3Functions.getClientVariableAsString(serverConnectionHandlerID, clientID, CLIENT_NICKNAME, &nickname) == ERROR_ok) {
-		snprintf(msg, sizeof(msg), template, nickname);
-		ts3Functions.logMessage(msg, LogLevel_INFO, "Test", serverConnectionHandlerID);
-
-		bouyomi_sendMessage(msg);
-
+		nyushitsu_sendMessage(oldChannelID, newChannelID, myChannelID, nickname);
 		ts3Functions.freeMemory(nickname);
 	}
 	else {
-		ts3Functions.logMessage("fail to getClientVariableAsString", LogLevel_INFO, "Test", serverConnectionHandlerID);
+		ts3Functions.logMessage("fail to getClientVariableAsString", LogLevel_INFO, LOG_PLUGIN_NAME, 0);
 	}
 }
 
@@ -882,6 +910,37 @@ void ts3plugin_onClientMoveTimeoutEvent(uint64 serverConnectionHandlerID, anyID 
 }
 
 void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, anyID moverID, const char* moverName, const char* moverUniqueIdentifier, const char* moveMessage) {
+	char* nickname;
+	char msg[BUFSIZ];
+	anyID myID;
+	uint64 myChannelID;
+
+	snprintf(msg, sizeof(msg), "ClientMoveMovedEvent: clientID=%d, oldChannelID=%lld, newChannelID=%lld, visibility=%d", clientID, oldChannelID, newChannelID, visibility);
+	ts3Functions.logMessage(msg, LogLevel_INFO, "Nyushitsu", serverConnectionHandlerID);
+
+	// 自分の ID を取得
+	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok) {
+		ts3Functions.logMessage("fail to getClientID", LogLevel_INFO, LOG_PLUGIN_NAME, 0);
+		return;
+	}
+	// 現在のチャンネル ID を取得
+	if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID, &myChannelID) != ERROR_ok) {
+		ts3Functions.logMessage("fail to getChannelOfClient", LogLevel_INFO, LOG_PLUGIN_NAME, 0);
+		return;
+	}
+
+	// 自分に関するイベントは読み上げない
+	if (clientID == myID) {
+		return;
+	}
+
+	if (ts3Functions.getClientVariableAsString(serverConnectionHandlerID, clientID, CLIENT_NICKNAME, &nickname) == ERROR_ok) {
+		nyushitsu_sendMessage(oldChannelID, newChannelID, myChannelID, nickname);
+		ts3Functions.freeMemory(nickname);
+	}
+	else {
+		ts3Functions.logMessage("fail to getClientVariableAsString", LogLevel_INFO, LOG_PLUGIN_NAME, 0);
+	}
 }
 
 void ts3plugin_onClientKickFromChannelEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, anyID kickerID, const char* kickerName, const char* kickerUniqueIdentifier, const char* kickMessage) {
