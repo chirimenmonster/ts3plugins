@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="nyushitsu.c" />
     <ClCompile Include="plugin.c" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +154,7 @@
     <ClInclude Include="..\..\include\teamspeak\public_errors_rare.h" />
     <ClInclude Include="..\..\include\teamspeak\public_rare_definitions.h" />
     <ClInclude Include="..\..\include\ts3_functions.h" />
+    <ClInclude Include="nyushitsu.h" />
     <ClInclude Include="plugin.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
