@@ -173,9 +173,6 @@ void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID, anyID clientI
 	anyID myID;
 	uint64 myChannelID;
 
-	snprintf(msg, sizeof(msg), "ClientMoveEvent: clientID=%d, oldChannelID=%lld, newChannelID=%lld, visibility=%d", clientID, oldChannelID, newChannelID, visibility);
-	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
-
     // 自分の ID を取得
 	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok) {
 		ts3Functions.logMessage("fail to getClientID", LogLevel_INFO, PLUGIN_NAME, 0);
@@ -187,7 +184,10 @@ void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID, anyID clientI
 		return;
 	}
     
-    // 自分に関するイベントは読み上げない
+	snprintf(msg, sizeof(msg), "ClientMoveEvent: clientID=%d, oldChannelID=%lld, newChannelID=%lld, visibility=%d, myID=%d, myChannelID=%lld", clientID, oldChannelID, newChannelID, visibility, myID, myChannelID);
+	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+
+	// 自分に関するイベントは読み上げない
     if (clientID == myID) {
         return;
     }
@@ -207,9 +207,6 @@ void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID, anyID cl
 	anyID myID;
 	uint64 myChannelID;
 
-	snprintf(msg, sizeof(msg), "ClientMoveMovedEvent: clientID=%d, oldChannelID=%lld, newChannelID=%lld, visibility=%d", clientID, oldChannelID, newChannelID, visibility);
-	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
-
 	// 自分の ID を取得
 	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok) {
 		ts3Functions.logMessage("fail to getClientID", LogLevel_INFO, PLUGIN_NAME, 0);
@@ -220,6 +217,9 @@ void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID, anyID cl
 		ts3Functions.logMessage("fail to getChannelOfClient", LogLevel_INFO, PLUGIN_NAME, 0);
 		return;
 	}
+
+	snprintf(msg, sizeof(msg), "ClientMoveMoveEvent: clientID=%d, oldChannelID=%lld, newChannelID=%lld, visibility=%d, myID=%d, myChannelID=%lld", clientID, oldChannelID, newChannelID, visibility, myID, myChannelID);
+	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
 
 	// 自分に関するイベントは読み上げない
 	if (clientID == myID) {

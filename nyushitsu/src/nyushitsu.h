@@ -6,7 +6,7 @@ void nyushitsu_sendMessage(uint64 oldChannelID, uint64 newChannelID, uint64 myCh
 
 #define PLUGIN_NAME			"Nyushitsu Plugin"
 #define PLUGIN_AUTHOR		"Chirimen"
-#define PLUGIN_VERSION		"0.2"
+#define PLUGIN_VERSION		"0.2.1"
 #define PLUGIN_DESCRIPTION	"Send Nickname to BouyomiChan"
 
 

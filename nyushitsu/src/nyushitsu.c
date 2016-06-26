@@ -119,8 +119,7 @@ void nyushitsu_sendMessage(uint64 oldChannelID, uint64 newChannelID, uint64 myCh
 	char msg[BUFSIZ];
 	char* template;
 
-    // 接続
-    if (oldChannelID == 0) {
+    if (oldChannelID == 0) {						// 接続
         if (newChannelID == myChannelID) {
             template = u8"%s が入室しました";		// TS3に接続して現在のチャンネルに入室            
         }
@@ -128,19 +127,19 @@ void nyushitsu_sendMessage(uint64 oldChannelID, uint64 newChannelID, uint64 myCh
 			template = u8"%s が接続しました";		// TS3に接続して別のチャンネルに入室            
         }
     }
-    else if (oldChannelID == myChannelID) {
-        if (newChannelID == 0) {
+    else if (oldChannelID == myChannelID) {			// 退室
+		if (newChannelID == 0) {
             template = u8"%s が切断しました";		// 現在のチャンネルから切断
         }
         else {
             template = u8"%s が移動しました";		// 現在のチャンネルから別のチャンネルに移動
         }
     }
-    else {
+    else {											// 入室、他チャンネル間移動、他チャンネルからの接続段
         if (newChannelID == myChannelID) {
             template = u8"%s が入室しました";		// 別のチャンネルから現在のチャンネルに入室
         }
-        if (newChannelID == 0) {
+        else if (newChannelID == 0) {
             template = u8"%s が切断しました";		// 別のチャンネルから切断
         }
         else {
