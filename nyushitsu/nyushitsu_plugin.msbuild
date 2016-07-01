@@ -9,8 +9,9 @@
         <PropertyGroup>
             <AppName>nyushitsu_plugin</AppName>
             <OutputDir>$(MSBuildProjectDirectory)\output</OutputDir>
-            <ResourceDir>$(MSBuildProjectDirectory)\res</ResourceDir>
+            <ResourceDir>$(MSBuildProjectDirectory)\resources</ResourceDir>
         </PropertyGroup>
+        <MSBuild Targets="TransformAll" Projects="$(MSBuildProjectDirectory)\resources\resources.csproj" />
         <MSBuild Targets="Build" Projects="$(MSBuildProjectDirectory)\src\nyushitsu_plugin.vcxproj"
             Properties="Configuration=Release;Platform=x64;OutDir=$(OutputDir)\$(AppName)\" />
         <Copy SourceFiles="$(OutputDir)\$(AppName)\nyushitsu_plugin.dll" DestinationFolder="$(OutputDir)\plugins" />
