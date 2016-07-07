@@ -8,11 +8,82 @@
 #include <stdlib.h>
 #include <string.h>
 #include <winsock2.h>
+#include <shlwapi.h>
 
 #include "ts3_functions.h"
 #include "nyushitsu.h"
 
+#define CONFIG_AVOID_OTHER_ROOM     "avoid_other_room"
+
 static SOCKET sock;
+static LPSTR wConfigFile[MAX_PATH];
+
+static struct {
+	TCHAR wConfigFile[MAX_PATH];
+	int avoidOtherRoom;
+} config;
+
+/* 設定ファイルルーチン群の初期設定 */
+int config_init(void) {
+	char configPath[MAX_PATH];
+	TCHAR wConfigPath[MAX_PATH];
+	size_t s;
+	char msg[1024];
+
+	/* 設定ファイル名の初期化 */
+	ts3Functions.getConfigPath(configPath, MAX_PATH);
+	
+	mbstowcs_s(&s, wConfigPath, sizeof(wConfigPath), configPath, strlen(configPath));
+	PathCombine(config.wConfigFile, wConfigPath, TEXT(PLUGIN_DLLNAME));
+	PathAddExtension(config.wConfigFile, TEXT(".ini"));
+
+	snprintf(msg, sizeof(msg), "Config File: %ws", config.wConfigFile);
+	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+
+	return 0;
+}
+
+/* 設定ファイルの読み込み　*/
+int config_read(void) {
+	char msg[1024];
+
+	config.avoidOtherRoom = GetPrivateProfileInt(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), 0, config.wConfigFile);
+
+	snprintf(msg, sizeof(msg), "read config: %s = %d", CONFIG_AVOID_OTHER_ROOM, config.avoidOtherRoom);
+	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+
+	return 0;
+}
+
+/* 設定ファイルへの保存 */
+int config_write(void) {
+	TCHAR value[256];
+	char msg[1024];
+
+	swprintf(value, sizeof(value), TEXT("%d"), config.avoidOtherRoom);
+	WritePrivateProfileString(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), value, config.wConfigFile);
+
+	snprintf(msg, sizeof(msg), "write config: %s = %ls", CONFIG_AVOID_OTHER_ROOM, value);
+	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+
+	return 0;
+}
+
+/* メニュー状態のスイッチ */
+int config_applymenu(char* pluginID, int menuID, int enable) {
+	if (enable >= 0) {
+		config.avoidOtherRoom = enable;
+	}
+    if (config.avoidOtherRoom == 0) {
+        ts3Functions.setPluginMenuEnabled(pluginID, menuID,     1);
+        ts3Functions.setPluginMenuEnabled(pluginID, menuID + 1, 0);
+    } else {
+        ts3Functions.setPluginMenuEnabled(pluginID, menuID,     0);
+        ts3Functions.setPluginMenuEnabled(pluginID, menuID + 1, 1);
+    }
+    return 0;
+}
+
 
 /* 棒読みちゃんへ接続する */
 int bouyomi_connect(void) {
@@ -119,12 +190,20 @@ void nyushitsu_sendMessage(uint64 oldChannelID, uint64 newChannelID, uint64 myCh
 	char msg[BUFSIZ];
 	char* template;
 
+	if (config.avoidOtherRoom == 1) {
+		if (oldChannelID != myChannelID && newChannelID != myChannelID) {
+			snprintf(msg, sizeof(msg), u8"自分のチャンネルに関係ないイベントです: old=%lld, new=%lld, name=%s", oldChannelID, newChannelID, nickname);
+			ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+			return;
+		}
+	}
+
     if (oldChannelID == 0) {						// 接続
         if (newChannelID == myChannelID) {
             template = u8"%s が入室しました";		// TS3に接続して現在のチャンネルに入室            
         }
         else {
-			template = u8"%s が接続しました";		// TS3に接続して別のチャンネルに入室            
+			template = u8"%s が接続しました";		// TS3に接続して別のチャンネルに入室
         }
     }
     else if (oldChannelID == myChannelID) {			// 退室
