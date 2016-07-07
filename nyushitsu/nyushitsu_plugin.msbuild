@@ -10,25 +10,30 @@
             <AppName>nyushitsu_plugin</AppName>
             <OutputDir>$(MSBuildProjectDirectory)\output</OutputDir>
             <ResourceDir>$(MSBuildProjectDirectory)\resources</ResourceDir>
+            <BuildDir>$(OutputDir)\build</BuildDir>
+            <PackageDir>$(OutputDir)\package</PackageDir>
+            <PluginDir>$(PackageDir)\plugins</PluginDir>
+            <DistributionDir>$(OutputDir)\distribution</DistributionDir>
         </PropertyGroup>
         <MSBuild Targets="TransformAll" Projects="$(MSBuildProjectDirectory)\resources\resources.csproj" />
         <MSBuild Targets="Build" Projects="$(MSBuildProjectDirectory)\src\nyushitsu_plugin.vcxproj"
-            Properties="Configuration=Release;Platform=x64;OutDir=$(OutputDir)\$(AppName)\" />
-        <Copy SourceFiles="$(OutputDir)\$(AppName)\nyushitsu_plugin.dll" DestinationFolder="$(OutputDir)\plugins" />
-        <Copy SourceFiles="$(ResourceDir)\package.ini" DestinationFolder="$(OutputDir)" />
-        <Copy SourceFiles="$(ResourceDir)\README.txt" DestinationFolder="$(OutputDir)" />
+            Properties="Configuration=Release;Platform=x64;OutDir=$(BuildDir)\" />
+        <Copy SourceFiles="$(BuildDir)\nyushitsu_plugin.dll" DestinationFolder="$(PluginDir)" />
+        <Copy SourceFiles="$(ResourceDir)\package.ini" DestinationFolder="$(PackageDir)" />
+        <Copy SourceFiles="$(ResourceDir)\README.txt" DestinationFolder="$(DistributionDir)" />
         <ItemGroup>
-            <TS3Files Include="$(OutputDir)\package.ini" />
-            <TS3Files Include="$(OutputDir)\plugins\$(AppName).dll" />
+            <TS3PluginResources Include="$(ResourceDir)\data\**" />
         </ItemGroup>
-        <Message Text="TEST: @(Files)" />
-        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="@(TS3Files)" RemoveRoot="$(OutputDir)"
-            ZipFileName="$(OutputDir)\$(AppName).ts3_plugin" />
+        <Copy SourceFiles="@(TS3PluginResources)" DestinationFolder="$(PluginDir)\%(RecursiveDir)" />
         <ItemGroup>
-            <PackageFiles Include="$(OutputDir)\$(AppName).ts3_plugin" />
-            <PackageFiles Include="$(OutputDir)\README.txt" />            
+            <TS3Files Include="$(PackageDir)\**" />
         </ItemGroup>
-        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="@(PackageFiles)" RemoveRoot="$(OutputDir)"
+        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="@(TS3Files)" RemoveRoot="$(PackageDir)"
+            ZipFileName="$(DistributionDir)\$(AppName).ts3_plugin" />
+        <ItemGroup>
+            <DistributionFiles Include="$(DistributionDir)\**" />
+        </ItemGroup>
+        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="@(DistributionFiles)" RemoveRoot="$(DistributionDir)"
             ZipFileName="$(OutputDir)\$(AppName).zip" />
     </Target>
 </Project>
