@@ -14,8 +14,6 @@
 #include <string.h>
 #include <assert.h>
 
-#include <winsock2.h>
-
 #include "teamspeak/public_errors.h"
 #include "teamspeak/public_errors_rare.h"
 #include "teamspeak/public_definitions.h"
@@ -163,6 +161,24 @@ void ts3plugin_shutdown() {
  * Following functions are optional, if not needed you don't need to implement them.
  */
 
+/* Tell client if plugin offers a configuration window. If this function is not implemented, it's an assumed "does not offer" (PLUGIN_OFFERS_NO_CONFIGURE). */
+int ts3plugin_offersConfigure() {
+	printf("PLUGIN: offersConfigure\n");
+	/*
+	* Return values:
+	* PLUGIN_OFFERS_NO_CONFIGURE         - Plugin does not implement ts3plugin_configure
+	* PLUGIN_OFFERS_CONFIGURE_NEW_THREAD - Plugin does implement ts3plugin_configure and requests to run this function in an own thread
+	* PLUGIN_OFFERS_CONFIGURE_QT_THREAD  - Plugin does implement ts3plugin_configure and requests to run this function in the Qt GUI thread
+	*/
+	return PLUGIN_OFFERS_CONFIGURE_QT_THREAD;  /* In this case ts3plugin_configure does not need to be implemented */
+}
+
+/* Plugin might offer a configuration window. If ts3plugin_offersConfigure returns 0, this function does not need to be implemented. */
+void ts3plugin_configure(void* handle, void* qParentWidget) {
+	adapter_configure(qParentWidget);
+	printf("PLUGIN: configure\n");
+}
+
 /*
  * If the plugin wants to use error return codes, plugin commands, hotkeys or menu items, it needs to register a command ID. This function will be
  * automatically called after the plugin was initialized. This function is optional. If you don't use these features, this function can be omitted.
@@ -238,9 +254,8 @@ void ts3plugin_initMenus(struct PluginMenuItem*** menuItems, char** menuIcon) {
 	 * e.g. for "test_plugin.dll", icon "1.png" is loaded from <TeamSpeak 3 Client install dir>\plugins\test_plugin\1.png
 	 */
 
-	BEGIN_CREATE_MENUS(2);  /* IMPORTANT: Number of menu items must be correct! */
+	BEGIN_CREATE_MENUS(1);  /* IMPORTANT: Number of menu items must be correct! */
 	CREATE_MENU_ITEM(PLUGIN_MENU_TYPE_GLOBAL, MENU_ID_GLOBAL_1, MENU_LABEL_1, "");
-	CREATE_MENU_ITEM(PLUGIN_MENU_TYPE_GLOBAL, MENU_ID_GLOBAL_2, MENU_LABEL_2, "");
 	END_CREATE_MENUS;  /* Includes an assert checking if the number of menu items matched */
 
 	/*
@@ -265,8 +280,6 @@ void ts3plugin_initMenus(struct PluginMenuItem*** menuItems, char** menuIcon) {
 	 */
 	/* For example, this would disable MENU_ID_GLOBAL_2: */
 	/* ts3Functions.setPluginMenuEnabled(pluginID, MENU_ID_GLOBAL_2, 0); */
-
-    config_applymenu(pluginID, MENU_ID_GLOBAL_1, -1);
 
 	/* All memory allocated in this function will be automatically released by the TeamSpeak client later by calling ts3plugin_freeMemory */
 }
@@ -370,12 +383,7 @@ void ts3plugin_onMenuItemEvent(uint64 serverConnectionHandlerID, enum PluginMenu
 				case MENU_ID_GLOBAL_1:
 					/* Menu global 1 was triggered */
 					ts3Functions.logMessage("Menu global 1", LogLevel_INFO, PLUGIN_NAME, 0);
-                    config_applymenu(pluginID, MENU_ID_GLOBAL_1, 1);
-					break;
-				case MENU_ID_GLOBAL_2:
-					/* Menu global 2 was triggered */
-					ts3Functions.logMessage("Menu global 2", LogLevel_INFO, PLUGIN_NAME, 0);
-                    config_applymenu(pluginID, MENU_ID_GLOBAL_1, 0);
+					adapter_show();
                     break;
 				default:
 					break;

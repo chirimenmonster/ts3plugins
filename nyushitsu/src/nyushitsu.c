@@ -16,12 +16,16 @@
 #define CONFIG_AVOID_OTHER_ROOM     "avoid_other_room"
 
 static SOCKET sock;
-static LPSTR wConfigFile[MAX_PATH];
+static TCHAR wConfigFile[MAX_PATH];
 
-static struct {
-	TCHAR wConfigFile[MAX_PATH];
-	int avoidOtherRoom;
-} config;
+config_t config;
+
+/* ロギング用ラッパー関数 */
+int logMessage(const char *msg) {
+	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+	return 0;
+}
+
 
 /* 設定ファイルルーチン群の初期設定 */
 int config_init(void) {
@@ -34,10 +38,10 @@ int config_init(void) {
 	ts3Functions.getConfigPath(configPath, MAX_PATH);
 	
 	mbstowcs_s(&s, wConfigPath, sizeof(wConfigPath), configPath, strlen(configPath));
-	PathCombine(config.wConfigFile, wConfigPath, TEXT(PLUGIN_DLLNAME));
-	PathAddExtension(config.wConfigFile, TEXT(".ini"));
+	PathCombine(wConfigFile, wConfigPath, TEXT(PLUGIN_DLLNAME));
+	PathAddExtension(wConfigFile, TEXT(".ini"));
 
-	snprintf(msg, sizeof(msg), "Config File: %ws", config.wConfigFile);
+	snprintf(msg, sizeof(msg), "Config File: %ws",wConfigFile);
 	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
 
 	return 0;
@@ -47,7 +51,7 @@ int config_init(void) {
 int config_read(void) {
 	char msg[1024];
 
-	config.avoidOtherRoom = GetPrivateProfileInt(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), 0, config.wConfigFile);
+	config.avoidOtherRoom = GetPrivateProfileInt(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), 0, wConfigFile);
 
 	snprintf(msg, sizeof(msg), "read config: %s = %d", CONFIG_AVOID_OTHER_ROOM, config.avoidOtherRoom);
 	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
@@ -61,7 +65,7 @@ int config_write(void) {
 	char msg[1024];
 
 	swprintf(value, sizeof(value), TEXT("%d"), config.avoidOtherRoom);
-	WritePrivateProfileString(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), value, config.wConfigFile);
+	WritePrivateProfileString(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), value, wConfigFile);
 
 	snprintf(msg, sizeof(msg), "write config: %s = %ls", CONFIG_AVOID_OTHER_ROOM, value);
 	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
