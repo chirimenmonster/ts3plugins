@@ -53,6 +53,9 @@
     <ClCompile Include="nyushitsu.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="filters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ui\settingsdialog.h">
@@ -73,6 +76,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="nyushitsu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="filters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

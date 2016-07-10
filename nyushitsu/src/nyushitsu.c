@@ -14,6 +14,7 @@
 #include "nyushitsu.h"
 
 #define CONFIG_AVOID_OTHER_ROOM     "avoid_other_room"
+#define CONFIG_FILTER_NUMBER		"filter_number"
 
 static SOCKET sock;
 static TCHAR wConfigFile[MAX_PATH];
@@ -51,7 +52,8 @@ int config_init(void) {
 int config_read(void) {
 	char msg[1024];
 
-	config.avoidOtherRoom = GetPrivateProfileInt(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), 0, wConfigFile);
+	config.avoidOtherRoom	= GetPrivateProfileInt(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), 0, wConfigFile);
+	config.filterNumber		= GetPrivateProfileInt(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_FILTER_NUMBER),	0, wConfigFile);
 
 	snprintf(msg, sizeof(msg), "read config: %s = %d", CONFIG_AVOID_OTHER_ROOM, config.avoidOtherRoom);
 	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
@@ -66,6 +68,9 @@ int config_write(void) {
 
 	swprintf(value, sizeof(value), TEXT("%d"), config.avoidOtherRoom);
 	WritePrivateProfileString(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), value, wConfigFile);
+
+	swprintf(value, sizeof(value), TEXT("%d"), config.filterNumber);
+	WritePrivateProfileString(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_FILTER_NUMBER), value, wConfigFile);
 
 	snprintf(msg, sizeof(msg), "write config: %s = %ls", CONFIG_AVOID_OTHER_ROOM, value);
 	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
@@ -192,6 +197,7 @@ int bouyomi_sendMessage(const char *bMessage) {
 /* 読み上げメッセージを選択して送信 */
 void nyushitsu_sendMessage(uint64 oldChannelID, uint64 newChannelID, uint64 myChannelID, const char* nickname) {
 	char msg[BUFSIZ];
+	char nickname_filtered[BUFSIZ];
 	char* template;
 
 	if (config.avoidOtherRoom == 1) {
@@ -218,7 +224,7 @@ void nyushitsu_sendMessage(uint64 oldChannelID, uint64 newChannelID, uint64 myCh
             template = u8"%s が移動しました";		// 現在のチャンネルから別のチャンネルに移動
         }
     }
-    else {											// 入室、他チャンネル間移動、他チャンネルからの接続段
+    else {											// 入室、他チャンネル間移動、他チャンネルからの接続断
         if (newChannelID == myChannelID) {
             template = u8"%s が入室しました";		// 別のチャンネルから現在のチャンネルに入室
         }
@@ -226,12 +232,20 @@ void nyushitsu_sendMessage(uint64 oldChannelID, uint64 newChannelID, uint64 myCh
             template = u8"%s が切断しました";		// 別のチャンネルから切断
         }
         else {
-            return;								// 他チャンネル間の移動は読み上げない
+            return;									// 他チャンネル間の移動は読み上げない
         }        
     }
 
-	snprintf(msg, sizeof(msg), template, nickname);
+	if (config.filterNumber) {
+		filter_number(nickname, nickname_filtered, BUFSIZ);
+		snprintf(msg, sizeof(msg), "replace nickname: %s -> %s", nickname, nickname_filtered);
+		ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+		snprintf(msg, sizeof(msg), template, nickname_filtered);
+	}
+	else {
+		snprintf(msg, sizeof(msg), template, nickname);
+	}
 	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
-
+	
 	bouyomi_sendMessage(msg);
 }

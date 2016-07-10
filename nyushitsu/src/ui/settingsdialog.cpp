@@ -14,6 +14,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	ui.setupUi(this);
 	ui.checkBox_1->setChecked(config.avoidOtherRoom);
+	ui.checkBox_2->setChecked(config.filterNumber);
 
 	snprintf(msg, sizeof(msg), "constructor: checked = %d", config.avoidOtherRoom);
 	logMessage(msg);
@@ -28,8 +29,9 @@ void SettingsDialog::accept()
 {
 	char msg[1024];
 
-	config.avoidOtherRoom = ui.checkBox_1->isChecked();
-	
+	config.avoidOtherRoom	= ui.checkBox_1->isChecked();
+	config.filterNumber		= ui.checkBox_2->isChecked();
+
 	snprintf(msg, sizeof(msg), "accept: checked = %d", config.avoidOtherRoom);
 	logMessage(msg);
 }

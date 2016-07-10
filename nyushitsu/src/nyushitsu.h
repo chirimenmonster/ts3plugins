@@ -28,6 +28,7 @@ extern struct TS3Functions ts3Functions;
 
 typedef struct {
 	int avoidOtherRoom;
+	int filterNumber;
 } config_t;
 
 extern config_t config;

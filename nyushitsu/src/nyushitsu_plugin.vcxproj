@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\plugin.c" />
+    <ClCompile Include="filters.cpp" />
     <ClCompile Include="nyushitsu.c" />
     <ClCompile Include="ui\adapter.cpp" />
     <ClCompile Include="ui\settingsdialog.cpp" />
@@ -165,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\plugin.h" />
+    <ClInclude Include="filters.h" />
     <ClInclude Include="nyushitsu.h" />
     <ClInclude Include="ui\adapter.h" />
     <ClInclude Include="GeneratedFiles\ui_settingsdialog.h" />
