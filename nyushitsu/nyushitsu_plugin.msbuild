@@ -18,9 +18,18 @@
         <MSBuild Targets="TransformAll" Projects="$(MSBuildProjectDirectory)\resources\resources.csproj" />
         <MSBuild Targets="Build" Projects="$(MSBuildProjectDirectory)\src\nyushitsu_plugin.vcxproj"
             Properties="Configuration=Release;Platform=x64;OutDir=$(BuildDir)\" />
+        <ItemGroup>
+            <TmpDirs Include="$(PluginDir)" />
+            <TmpDirs Include="$(PackageDir)" />
+            <TmpDirs Include="$(DistributionDir)" />
+        </ItemGroup>
+        <RemoveDir Directories="@(TmpDirs)" />
         <Copy SourceFiles="$(BuildDir)\nyushitsu_plugin.dll" DestinationFolder="$(PluginDir)" />
         <Copy SourceFiles="$(ResourceDir)\package.ini" DestinationFolder="$(PackageDir)" />
-        <Copy SourceFiles="$(ResourceDir)\README.txt" DestinationFolder="$(DistributionDir)" />
+        <ItemGroup>
+            <Documents Include="$(MSBuildProjectDirectory)\..\*.md" />
+        </ItemGroup>
+        <Copy SourceFiles="@(Documents)" DestinationFolder="$(DistributionDir)" />
         <ItemGroup>
             <TS3PluginResources Include="$(ResourceDir)\data\**" />
         </ItemGroup>
