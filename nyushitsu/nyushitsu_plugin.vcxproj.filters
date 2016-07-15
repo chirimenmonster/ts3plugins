@@ -35,7 +35,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\plugin.c">
+    <ClCompile Include="src\filters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\nyushitsu.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\plugin.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\settingsdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\storage.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\uiadapter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_settingsdialog.cpp">
@@ -44,41 +62,35 @@
     <ClCompile Include="GeneratedFiles\Release\moc_settingsdialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="ui\settingsdialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\adapter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="nyushitsu.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="filters.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="ui\settingsdialog.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="ui\settingsdialog.ui">
+    <CustomBuild Include="src\ui\settingsdialog.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="src\ui\settingsdialog.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\plugin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_settingsdialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="ui\adapter.h">
+    <ClInclude Include="src\filters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="nyushitsu.h">
+    <ClInclude Include="src\nyushitsu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="filters.h">
+    <ClInclude Include="src\plugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\storage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\uiadapter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -16,7 +16,7 @@
             <DistributionDir>$(OutputDir)\distribution</DistributionDir>
         </PropertyGroup>
         <MSBuild Targets="TransformAll" Projects="$(MSBuildProjectDirectory)\resources\resources.csproj" />
-        <MSBuild Targets="Build" Projects="$(MSBuildProjectDirectory)\src\nyushitsu_plugin.vcxproj"
+        <MSBuild Targets="Build" Projects="$(MSBuildProjectDirectory)\nyushitsu_plugin.vcxproj"
             Properties="Configuration=Release;Platform=x64;OutDir=$(BuildDir)\" />
         <ItemGroup>
             <TmpDirs Include="$(PluginDir)" />

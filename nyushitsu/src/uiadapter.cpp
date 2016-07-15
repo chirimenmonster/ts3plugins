@@ -1,8 +1,8 @@
 
 #include <QWidget>
 
-#include "adapter.h"
-#include "settingsdialog.h"
+#include "ui/settingsdialog.h"
+#include "uiadapter.h"
 
 static SettingsDialog *dialog = NULL;
 

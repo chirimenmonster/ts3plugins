@@ -22,6 +22,8 @@
 #include "ts3_functions.h"
 #include "plugin.h"
 #include "nyushitsu.h"
+#include "uiadapter.h"
+#include "utils.h"
 
 struct TS3Functions ts3Functions;
 
@@ -127,7 +129,7 @@ int ts3plugin_init() {
 
 	printf("PLUGIN: App path: %s\nResources path: %s\nConfig path: %s\nPlugin path: %s\n", appPath, resourcesPath, configPath, pluginPath);
 
-	config_init();
+	config_init(configPath);
 	config_read();
 
     return 0;  /* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
@@ -267,10 +269,6 @@ void ts3plugin_initMenus(struct PluginMenuItem*** menuItems, char** menuIcon) {
 	_strcpy(*menuIcon, PLUGIN_MENU_BUFSZ, "t.png");
     */
 
-	char msg[1024];
-	snprintf(msg, sizeof(msg), "initMenus: PluginID: %s", pluginID);
-	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
-
 	/*
 	 * Menus can be enabled or disabled with: ts3Functions.setPluginMenuEnabled(pluginID, menuID, 0|1);
 	 * Test it with plugin command: /test enablemenu <menuID> <0|1>
@@ -295,23 +293,21 @@ void ts3plugin_initMenus(struct PluginMenuItem*** menuItems, char** menuIcon) {
 
 void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, const char* moveMessage) {
 	char* nickname;
-	char msg[BUFSIZ];
 	anyID myID;
 	uint64 myChannelID;
 
     // 自分の ID を取得
 	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok) {
-		ts3Functions.logMessage("fail to getClientID", LogLevel_INFO, PLUGIN_NAME, 0);
+		logMessage("fail to getClientID");
 		return;
 	}
     // 現在のチャンネル ID を取得
 	if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID, &myChannelID) != ERROR_ok) {
-		ts3Functions.logMessage("fail to getChannelOfClient", LogLevel_INFO, PLUGIN_NAME, 0);
+		logMessage("fail to getChannelOfClient");
 		return;
 	}
     
-	snprintf(msg, sizeof(msg), "ClientMoveEvent: clientID=%d, oldChannelID=%lld, newChannelID=%lld, visibility=%d, myID=%d, myChannelID=%lld", clientID, oldChannelID, newChannelID, visibility, myID, myChannelID);
-	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+	logMessage("ClientMoveEvent: clientID=%d, oldChannelID=%lld, newChannelID=%lld, visibility=%d, myID=%d, myChannelID=%lld", clientID, oldChannelID, newChannelID, visibility, myID, myChannelID);
 
 	// 自分に関するイベントは読み上げない
     if (clientID == myID) {
@@ -323,29 +319,27 @@ void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID, anyID clientI
 		ts3Functions.freeMemory(nickname);
 	}
 	else {
-		ts3Functions.logMessage("fail to getClientVariableAsString", LogLevel_INFO, PLUGIN_NAME, 0);
+		logMessage("fail to getClientVariableAsString");
 	}
 }
 
 void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, anyID moverID, const char* moverName, const char* moverUniqueIdentifier, const char* moveMessage) {
 	char* nickname;
-	char msg[BUFSIZ];
 	anyID myID;
 	uint64 myChannelID;
 
 	// 自分の ID を取得
 	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok) {
-		ts3Functions.logMessage("fail to getClientID", LogLevel_INFO, PLUGIN_NAME, 0);
+		logMessage("fail to getClientID");
 		return;
 	}
 	// 現在のチャンネル ID を取得
 	if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID, &myChannelID) != ERROR_ok) {
-		ts3Functions.logMessage("fail to getChannelOfClient", LogLevel_INFO, PLUGIN_NAME, 0);
+		logMessage("fail to getChannelOfClient");
 		return;
 	}
 
-	snprintf(msg, sizeof(msg), "ClientMoveMoveEvent: clientID=%d, oldChannelID=%lld, newChannelID=%lld, visibility=%d, myID=%d, myChannelID=%lld", clientID, oldChannelID, newChannelID, visibility, myID, myChannelID);
-	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+	logMessage("ClientMoveMoveEvent: clientID=%d, oldChannelID=%lld, newChannelID=%lld, visibility=%d, myID=%d, myChannelID=%lld", clientID, oldChannelID, newChannelID, visibility, myID, myChannelID);
 
 	// 自分に関するイベントは読み上げない
 	if (clientID == myID) {
@@ -357,7 +351,7 @@ void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID, anyID cl
 		ts3Functions.freeMemory(nickname);
 	}
 	else {
-		ts3Functions.logMessage("fail to getClientVariableAsString", LogLevel_INFO, PLUGIN_NAME, 0);
+		logMessage("fail to getClientVariableAsString");
 	}
 }
 
@@ -382,7 +376,6 @@ void ts3plugin_onMenuItemEvent(uint64 serverConnectionHandlerID, enum PluginMenu
 			switch(menuItemID) {
 				case MENU_ID_GLOBAL_1:
 					/* Menu global 1 was triggered */
-					ts3Functions.logMessage("Menu global 1", LogLevel_INFO, PLUGIN_NAME, 0);
 					adapter_show();
                     break;
 				default:

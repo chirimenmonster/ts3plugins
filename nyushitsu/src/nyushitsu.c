@@ -8,90 +8,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <winsock2.h>
-#include <shlwapi.h>
 
-#include "ts3_functions.h"
 #include "nyushitsu.h"
-
-#define CONFIG_AVOID_OTHER_ROOM     "avoid_other_room"
-#define CONFIG_FILTER_NUMBER		"filter_number"
+#include "utils.h"
+#include "storage.h"
 
 static SOCKET sock;
-static TCHAR wConfigFile[MAX_PATH];
-
-config_t config;
-
-/* ロギング用ラッパー関数 */
-int logMessage(const char *msg) {
-	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
-	return 0;
-}
-
-
-/* 設定ファイルルーチン群の初期設定 */
-int config_init(void) {
-	char configPath[MAX_PATH];
-	TCHAR wConfigPath[MAX_PATH];
-	size_t s;
-	char msg[1024];
-
-	/* 設定ファイル名の初期化 */
-	ts3Functions.getConfigPath(configPath, MAX_PATH);
-	
-	mbstowcs_s(&s, wConfigPath, sizeof(wConfigPath), configPath, strlen(configPath));
-	PathCombine(wConfigFile, wConfigPath, TEXT(PLUGIN_DLLNAME));
-	PathAddExtension(wConfigFile, TEXT(".ini"));
-
-	snprintf(msg, sizeof(msg), "Config File: %ws",wConfigFile);
-	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
-
-	return 0;
-}
-
-/* 設定ファイルの読み込み　*/
-int config_read(void) {
-	char msg[1024];
-
-	config.avoidOtherRoom	= GetPrivateProfileInt(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), 0, wConfigFile);
-	config.filterNumber		= GetPrivateProfileInt(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_FILTER_NUMBER),	0, wConfigFile);
-
-	snprintf(msg, sizeof(msg), "read config: %s = %d", CONFIG_AVOID_OTHER_ROOM, config.avoidOtherRoom);
-	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
-
-	return 0;
-}
-
-/* 設定ファイルへの保存 */
-int config_write(void) {
-	TCHAR value[256];
-	char msg[1024];
-
-	swprintf(value, sizeof(value), TEXT("%d"), config.avoidOtherRoom);
-	WritePrivateProfileString(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), value, wConfigFile);
-
-	swprintf(value, sizeof(value), TEXT("%d"), config.filterNumber);
-	WritePrivateProfileString(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_FILTER_NUMBER), value, wConfigFile);
-
-	snprintf(msg, sizeof(msg), "write config: %s = %ls", CONFIG_AVOID_OTHER_ROOM, value);
-	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
-
-	return 0;
-}
-
-/* メニュー状態のスイッチ */
-int config_applymenu(char* pluginID, int menuID, int enable) {
-	if (enable >= 0) {
-		config.avoidOtherRoom = enable;
-	}
-    if (config.avoidOtherRoom == 0) {
-        ts3Functions.setPluginMenuEnabled(pluginID, menuID,     1);
-        ts3Functions.setPluginMenuEnabled(pluginID, menuID + 1, 0);
-    } else {
-        ts3Functions.setPluginMenuEnabled(pluginID, menuID,     0);
-        ts3Functions.setPluginMenuEnabled(pluginID, menuID + 1, 1);
-    }
-    return 0;
-}
 
 
 /* 棒読みちゃんへ接続する */
@@ -102,28 +24,28 @@ int bouyomi_connect(void) {
 
 	WSADATA wsaData;
 	int err;
-	char msg[1024];
+	char *msg;
 
 	err = WSAStartup(MAKEWORD(2, 0), &wsaData);
 	if (err != 0) {
 		switch (err) {
 		case WSASYSNOTREADY:
-			printf("WSASYSNOTREADY\n");
+			msg = "WSASYSNOTREADY";
 			break;
 		case WSAVERNOTSUPPORTED:
-			printf("WSAVERNOTSUPPORTED\n");
+			msg = "WSAVERNOTSUPPORTED";
 			break;
 		case WSAEINPROGRESS:
-			printf("WSAEINPROGRESS\n");
+			msg = "WSAEINPROGRESS";
 			break;
 		case WSAEPROCLIM:
-			printf("WSAEPROCLIM\n");
+			msg = "WSAEPROCLIM";
 			break;
 		case WSAEFAULT:
-			printf("WSAEFAULT\n");
+			msg = "WSAEFAULT";
 			break;
 		}
-		ts3Functions.logMessage("Error WSAStartup", LogLevel_ERROR, PLUGIN_NAME, 0);
+		logMessage("Error WSAStartup: %s", msg);
 		return 1;
 	}
 
@@ -132,8 +54,7 @@ int bouyomi_connect(void) {
 	// ソケットの作成
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) {
-		snprintf(msg, sizeof(msg), "socket : %d\n", WSAGetLastError());
-		ts3Functions.logMessage(msg, LogLevel_ERROR, PLUGIN_NAME, 0);
+		logMessage("socket : %d\n", WSAGetLastError());
 		return 1;
 	}
 
@@ -144,8 +65,7 @@ int bouyomi_connect(void) {
 
 	// サーバに接続
 	if (connect(sock, (struct sockaddr *)&server, sizeof(server)) != 0) {
-		snprintf(msg, sizeof(msg), "connect : %d\n", WSAGetLastError());
-		ts3Functions.logMessage(msg, LogLevel_ERROR, PLUGIN_NAME, 0);
+		logMessage("connect : %d\n", WSAGetLastError());
 		return 1;
 	}
 	return 0;
@@ -168,15 +88,13 @@ int bouyomi_sendMessage(const char *bMessage) {
 	INT32 iLength;
 	char bCode = 0;
 	char buf[BUFSIZ];
-	char msg[1024];
 
 	if (bouyomi_connect() != 0) {
 		return 1;
 	}
 
 	iLength = (int)strlen(bMessage);
-	snprintf(msg, sizeof(msg), u8"send to BoyomiChan (%d): %s\n", iLength, bMessage);
-	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+	logMessage(u8"send to BoyomiChan (%d): %s\n", iLength, bMessage);
 
 	memset(buf, 0, sizeof(buf));
 	*(u_short *)&buf[0] = iCommand; //コマンド（ 0:メッセージ読み上げ）
@@ -195,15 +113,13 @@ int bouyomi_sendMessage(const char *bMessage) {
 }
 
 /* 読み上げメッセージを選択して送信 */
-void nyushitsu_sendMessage(uint64 oldChannelID, uint64 newChannelID, uint64 myChannelID, const char* nickname) {
-	char msg[BUFSIZ];
+void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myChannelID, const char* nickname) {
 	char nickname_filtered[BUFSIZ];
 	char* template;
 
 	if (config.avoidOtherRoom == 1) {
 		if (oldChannelID != myChannelID && newChannelID != myChannelID) {
-			snprintf(msg, sizeof(msg), u8"自分のチャンネルに関係ないイベントです: old=%lld, new=%lld, name=%s", oldChannelID, newChannelID, nickname);
-			ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+			logMessage(u8"自分のチャンネルに関係ないイベントです: old=%lld, new=%lld, name=%s", oldChannelID, newChannelID, nickname);
 			return;
 		}
 	}
@@ -236,16 +152,17 @@ void nyushitsu_sendMessage(uint64 oldChannelID, uint64 newChannelID, uint64 myCh
         }        
     }
 
+	char msg[1024];
+
 	if (config.filterNumber) {
 		filter_number(nickname, nickname_filtered, BUFSIZ);
-		snprintf(msg, sizeof(msg), "replace nickname: %s -> %s", nickname, nickname_filtered);
-		ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+		logMessage("replace nickname: %s -> %s", nickname, nickname_filtered);
 		snprintf(msg, sizeof(msg), template, nickname_filtered);
 	}
 	else {
 		snprintf(msg, sizeof(msg), template, nickname);
 	}
-	ts3Functions.logMessage(msg, LogLevel_INFO, PLUGIN_NAME, 0);
+	logMessage(msg);
 	
 	bouyomi_sendMessage(msg);
 }

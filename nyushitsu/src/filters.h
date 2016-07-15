@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-	int filter_number(const char *string, char *result, size_t size);
+int filter_number(const char *string, char *result, size_t size);
 
 #ifdef __cplusplus
 }

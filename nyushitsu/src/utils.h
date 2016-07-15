@@ -2,9 +2,9 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif /* __cplusplus */
+#endif
 
-	void adapter_configure(void* qParentWidget);
+void logMessage(const char *format, ...);
 
 #ifdef __cplusplus
 }
