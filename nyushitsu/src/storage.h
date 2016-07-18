@@ -10,7 +10,7 @@ int config_write(void);
 
 typedef struct {
 	int avoidOtherRoom;
-	int filterNumber;
+	int filterStrip;
 } config_t;
 
 extern config_t config;

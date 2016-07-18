@@ -27,7 +27,7 @@
       <item>
        <widget class="QCheckBox" name="checkBox_2">
         <property name="text">
-         <string>名前に含まれる数字を削除する</string>
+         <string>名前に含まれる不要な文字を削除する</string>
         </property>
        </widget>
       </item>

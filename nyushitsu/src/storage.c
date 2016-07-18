@@ -8,7 +8,7 @@
 #include "storage.h"
 
 #define CONFIG_AVOID_OTHER_ROOM     "avoid_other_room"
-#define CONFIG_FILTER_NUMBER		"filter_number"
+#define CONFIG_FILTER_STRIP			"filter_strip"
 
 static SOCKET sock;
 static TCHAR wConfigFile[MAX_PATH];
@@ -33,8 +33,8 @@ int config_init(char *configPath) {
 /* 設定ファイルの読み込み　*/
 int config_read(void) {
 
-	config.avoidOtherRoom	= GetPrivateProfileInt(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), 0, wConfigFile);
-	config.filterNumber		= GetPrivateProfileInt(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_FILTER_NUMBER),	0, wConfigFile);
+	config.avoidOtherRoom	= GetPrivateProfileInt(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), 1, wConfigFile);
+	config.filterStrip		= GetPrivateProfileInt(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_FILTER_STRIP),		1, wConfigFile);
 
 	logMessage("read config: %s = %d", CONFIG_AVOID_OTHER_ROOM, config.avoidOtherRoom);
 
@@ -48,8 +48,8 @@ int config_write(void) {
 	swprintf(value, sizeof(value), TEXT("%d"), config.avoidOtherRoom);
 	WritePrivateProfileString(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_AVOID_OTHER_ROOM), value, wConfigFile);
 
-	swprintf(value, sizeof(value), TEXT("%d"), config.filterNumber);
-	WritePrivateProfileString(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_FILTER_NUMBER), value, wConfigFile);
+	swprintf(value, sizeof(value), TEXT("%d"), config.filterStrip);
+	WritePrivateProfileString(TEXT(PLUGIN_DLLNAME), TEXT(CONFIG_FILTER_STRIP), value, wConfigFile);
 
 	logMessage("write config: %s = %ls", CONFIG_AVOID_OTHER_ROOM, value);
 

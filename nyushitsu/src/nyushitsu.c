@@ -53,8 +53,8 @@ void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myCh
         }        
     }
 
-	if (config.filterNumber) {
-		filter_number(nickname, nickname_filtered, sizeof(nickname_filtered));
+	if (config.filterStrip) {
+		filter_strip(nickname, nickname_filtered, sizeof(nickname_filtered));
 		logMessage("replace nickname: %s -> %s", nickname, nickname_filtered);
 		nickname = nickname_filtered;
 	}
