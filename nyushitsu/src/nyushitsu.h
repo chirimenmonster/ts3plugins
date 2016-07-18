@@ -4,7 +4,7 @@
 #define PLUGIN_DLLNAME		"nyushitsu_plugin"
 #define PLUGIN_NAME			"Nyushitsu Plugin"
 #define PLUGIN_AUTHOR		"Chirimen"
-#define PLUGIN_VERSION		"0.3"
+#define PLUGIN_VERSION		"0.3.1"
 #define PLUGIN_DESCRIPTION	"Send Nickname to BouyomiChan"
 
 #define MENU_LABEL_1		"Settings"
