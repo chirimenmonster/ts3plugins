@@ -5,7 +5,6 @@
 
 #include "settingsdialog.h"
 #include "../nyushitsu.h"
-#include "../utils.h"
 #include "../storage.h"
 
 SettingsDialog::SettingsDialog(QWidget *parent)

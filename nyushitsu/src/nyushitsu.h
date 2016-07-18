@@ -9,19 +9,24 @@
 
 #define MENU_LABEL_1		"Settings"
 
+#define BOUYOMI_HEADERSIZE	15
+#define MAX_NICKNAME		256
+#define MAX_BOUYOMICMD		1024
+#define MAX_BOUYOMIMSG		(MAX_BOUYOMICMD - BOUYOMI_HEADERSIZE)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int config_init(char *configPath);
-int config_read(void);
-int config_write(void);
-
-int bouyomi_connect(void);
-int bouyomi_close(void);
-int bouyomi_sendMessage(const char *bMessage);
+void logMessage(const char *format, ...);
 
 void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myChannelID, const char* nickname);
+
+void nyushitsu_readConfig(char *configPath);
+void nyushitsu_writeConfig(void);
+
+void nyushitsu_configDialog(void *qParentWidget);
+void nyushitsu_showDialog(void);
 
 #ifdef __cplusplus
 }

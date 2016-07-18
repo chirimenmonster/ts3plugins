@@ -3,7 +3,6 @@
 
 #include "ts3_functions.h"
 #include "nyushitsu.h"
-#include "utils.h"
 
 extern struct TS3Functions ts3Functions;
 

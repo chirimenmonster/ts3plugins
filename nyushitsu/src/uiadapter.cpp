@@ -6,7 +6,7 @@
 
 static SettingsDialog *dialog = NULL;
 
-QWidget* getMainWindowWidget() {
+static QWidget* getMainWindowWidget() {
 	foreach(QWidget *widget, QApplication::topLevelWidgets()) {
 		if (widget->isWindow() && widget->inherits("QMainWindow") && !widget->windowTitle().isEmpty()) {
 			return widget;

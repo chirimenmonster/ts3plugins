@@ -5,7 +5,6 @@
 #include <shlwapi.h>
 
 #include "nyushitsu.h"
-#include "utils.h"
 #include "storage.h"
 
 #define CONFIG_AVOID_OTHER_ROOM     "avoid_other_room"

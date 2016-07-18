@@ -22,8 +22,6 @@
 #include "ts3_functions.h"
 #include "plugin.h"
 #include "nyushitsu.h"
-#include "uiadapter.h"
-#include "utils.h"
 
 struct TS3Functions ts3Functions;
 
@@ -129,8 +127,7 @@ int ts3plugin_init() {
 
 	printf("PLUGIN: App path: %s\nResources path: %s\nConfig path: %s\nPlugin path: %s\n", appPath, resourcesPath, configPath, pluginPath);
 
-	config_init(configPath);
-	config_read();
+	nyushitsu_readConfig(configPath);
 
     return 0;  /* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
 	/* -2 is a very special case and should only be used if a plugin displays a dialog (e.g. overlay) asking the user to disable
@@ -143,7 +140,7 @@ void ts3plugin_shutdown() {
     /* Your plugin cleanup code here */
     printf("PLUGIN: shutdown\n");
 
-	config_write();
+	nyushitsu_writeConfig();
 
 	/*
 	 * Note:
@@ -177,7 +174,7 @@ int ts3plugin_offersConfigure() {
 
 /* Plugin might offer a configuration window. If ts3plugin_offersConfigure returns 0, this function does not need to be implemented. */
 void ts3plugin_configure(void* handle, void* qParentWidget) {
-	adapter_configure(qParentWidget);
+	nyushitsu_configDialog(qParentWidget);
 	printf("PLUGIN: configure\n");
 }
 
@@ -376,7 +373,7 @@ void ts3plugin_onMenuItemEvent(uint64 serverConnectionHandlerID, enum PluginMenu
 			switch(menuItemID) {
 				case MENU_ID_GLOBAL_1:
 					/* Menu global 1 was triggered */
-					adapter_show();
+					nyushitsu_showDialog();
                     break;
 				default:
 					break;
