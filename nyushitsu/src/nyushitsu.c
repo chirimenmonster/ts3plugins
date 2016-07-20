@@ -19,7 +19,11 @@ void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myCh
 	char nickname_filtered[MAX_NICKNAME];
 	char* template;
 
-	if (config.avoidOtherRoom == 1) {
+	if (!config.enableVoiceOnMove) {
+		return;
+	}
+
+	if (!config.enableWatchOtherRoom) {
 		if (oldChannelID != myChannelID && newChannelID != myChannelID) {
 			logMessage(u8"自分のチャンネルに関係ないイベントです: old=%lld, new=%lld, name=%s", oldChannelID, newChannelID, nickname);
 			return;
@@ -54,7 +58,7 @@ void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myCh
         }        
     }
 
-	if (config.filterStrip) {
+	if (config.enableNicknameFilter) {
 		filter_strip(nickname, nickname_filtered, sizeof(nickname_filtered));
 		logMessage("replace nickname: %s -> %s", nickname, nickname_filtered);
 		nickname = nickname_filtered;
@@ -69,8 +73,12 @@ void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myCh
 void nyushitsu_sendChatMessage(const char *fromName, const char *message)
 {
 	char fromName_filtered[MAX_NICKNAME];
-		
-	if (config.filterStrip) {
+
+	if (!config.enableVoiceOnChat) {
+		return;
+	}
+
+	if (config.enableNicknameFilter) {
 		filter_strip(fromName, fromName_filtered, sizeof(fromName_filtered));
 		logMessage("replace nickname: %s -> %s", fromName, fromName_filtered);
 		fromName = fromName_filtered;

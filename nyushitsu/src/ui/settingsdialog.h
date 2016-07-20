@@ -14,9 +14,11 @@ public:
 
 private slots:
 	void accept();
+	void reset();
 
 private:
 	Ui::SettingsDialogClass ui;
+	void readConfig();
 };
 
 #endif // SETTINGSDIALOG_H

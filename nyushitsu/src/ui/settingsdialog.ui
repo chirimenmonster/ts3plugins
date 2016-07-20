@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>405</width>
-    <height>192</height>
+    <width>424</width>
+    <height>299</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,16 +18,30 @@
     <item row="0" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QCheckBox" name="checkBox_1">
+       <widget class="QCheckBox" name="checkBox_enableVoiceOnMove">
         <property name="text">
-         <string>自分のいるルームに無関係な移動を無視する</string>
+         <string>入退室者を読み上げる</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_2">
+       <widget class="QCheckBox" name="checkBox_enableVoiceOnChat">
+        <property name="text">
+         <string>チャットを読み上げる</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_enableNicknameFilter">
         <property name="text">
          <string>名前に含まれる不要な文字を削除する</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_enableWatchOtherRoom">
+        <property name="text">
+         <string>自分のいるルームに無関係な移動も読み上げる</string>
         </property>
        </widget>
       </item>
@@ -69,9 +83,16 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="pushButton_apply">
         <property name="text">
          <string>適用</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_reset">
+        <property name="text">
+         <string>リセット</string>
         </property>
        </widget>
       </item>
@@ -92,8 +113,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>196</x>
-     <y>165</y>
+     <x>211</x>
+     <y>286</y>
     </hint>
     <hint type="destinationlabel">
      <x>202</x>
@@ -108,8 +129,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>196</x>
-     <y>165</y>
+     <x>211</x>
+     <y>286</y>
     </hint>
     <hint type="destinationlabel">
      <x>202</x>
@@ -124,8 +145,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>196</x>
-     <y>165</y>
+     <x>211</x>
+     <y>286</y>
     </hint>
     <hint type="destinationlabel">
      <x>202</x>
@@ -134,14 +155,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
+   <sender>pushButton_apply</sender>
    <signal>clicked()</signal>
    <receiver>SettingsDialogClass</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>346</x>
-     <y>165</y>
+     <x>311</x>
+     <y>286</y>
     </hint>
     <hint type="destinationlabel">
      <x>202</x>
@@ -149,8 +170,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton_reset</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialogClass</receiver>
+   <slot>reset()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>365</x>
+     <y>272</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>accept()</slot>
+  <slot>reset()</slot>
  </slots>
 </ui>

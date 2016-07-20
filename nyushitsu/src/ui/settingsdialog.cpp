@@ -11,10 +11,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
-	ui.checkBox_1->setChecked(config.avoidOtherRoom);
-	ui.checkBox_2->setChecked(config.filterStrip);
-
-	logMessage("constructor: checked = %d", config.avoidOtherRoom);
+	readConfig();
 }
 
 SettingsDialog::~SettingsDialog()
@@ -24,8 +21,23 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::accept()
 {
-	config.avoidOtherRoom	= ui.checkBox_1->isChecked();
-	config.filterStrip		= ui.checkBox_2->isChecked();
+	config.enableVoiceOnMove		= ui.checkBox_enableVoiceOnMove		->isChecked();
+	config.enableVoiceOnChat		= ui.checkBox_enableVoiceOnChat		->isChecked();
+	config.enableNicknameFilter		= ui.checkBox_enableNicknameFilter	->isChecked();
+	config.enableWatchOtherRoom		= ui.checkBox_enableWatchOtherRoom	->isChecked();
+}
 
-	logMessage("accept: checked = %d", config.avoidOtherRoom);
+void SettingsDialog::reset()
+{
+	config_default();
+	readConfig();
+}
+
+// config •Ï”‚ð UI‚É”½‰f‚³‚¹‚é
+void SettingsDialog::readConfig()
+{
+	ui.checkBox_enableVoiceOnMove		->setChecked(config.enableVoiceOnMove);
+	ui.checkBox_enableVoiceOnChat		->setChecked(config.enableVoiceOnChat);
+	ui.checkBox_enableNicknameFilter	->setChecked(config.enableNicknameFilter);
+	ui.checkBox_enableWatchOtherRoom	->setChecked(config.enableWatchOtherRoom);
 }
