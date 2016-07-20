@@ -352,6 +352,11 @@ void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID, anyID cl
 	}
 }
 
+int  ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID targetMode, anyID toID, anyID fromID, const char* fromName, const char* fromUniqueIdentifier, const char* message, int ffIgnored)
+{
+	nyushitsu_sendChatMessage(fromName, message);
+	return 0;
+}
 
 /* Client UI callbacks */
 

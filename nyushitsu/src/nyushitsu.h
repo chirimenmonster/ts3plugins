@@ -20,7 +20,8 @@ extern "C" {
 
 void logMessage(const char *format, ...);
 
-void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myChannelID, const char* nickname);
+void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myChannelID, const char *nickname);
+void nyushitsu_sendChatMessage(const char *fromName, const char *message);
 
 void nyushitsu_readConfig(char *configPath);
 void nyushitsu_writeConfig(void);

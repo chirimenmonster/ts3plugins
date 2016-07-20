@@ -14,7 +14,8 @@
 
 
 /* 読み上げメッセージを選択して送信 */
-void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myChannelID, const char* nickname) {
+void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myChannelID, const char* nickname)
+{
 	char nickname_filtered[MAX_NICKNAME];
 	char* template;
 
@@ -62,29 +63,47 @@ void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myCh
 	char msg[MAX_BOUYOMIMSG];
 
 	snprintf(msg, sizeof(msg), template, nickname);
-	logMessage(msg);
-	
+	bouyomi_sendMessage(msg);
+}
+
+void nyushitsu_sendChatMessage(const char *fromName, const char *message)
+{
+	char fromName_filtered[MAX_NICKNAME];
+		
+	if (config.filterStrip) {
+		filter_strip(fromName, fromName_filtered, sizeof(fromName_filtered));
+		logMessage("replace nickname: %s -> %s", fromName, fromName_filtered);
+		fromName = fromName_filtered;
+	}
+
+	char msg[MAX_BOUYOMIMSG];
+
+	snprintf(msg, sizeof(msg), "%s %s", fromName, message);
 	bouyomi_sendMessage(msg);
 }
 
 /* 設定内容保存ファイルの読み込み */
-void nyushitsu_readConfig(char *configPath) {
+void nyushitsu_readConfig(char *configPath)
+{
 	config_init(configPath);
 	config_read();
 }
 
 /* 設定を ini ファイルへ書き込む */
-void nyushitsu_writeConfig(void){
+void nyushitsu_writeConfig(void)
+{
 	config_write();
 }
 
 
 /* 設定ウィンドウの初期化?  ts3plugin_configure() から呼び出されるが、たぶん呼ばれない */
-void nyushitsu_configDialog(void* qParentWidget) {
+void nyushitsu_configDialog(void* qParentWidget)
+{
 	adapter_configure(qParentWidget);
 }
 
 /* 設定ウィンドウの表示 */
-void nyushitsu_showDialog(void) {
+void nyushitsu_showDialog(void)
+{
 	adapter_show();
 }

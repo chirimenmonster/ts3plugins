@@ -168,6 +168,14 @@
     <ClCompile Include="src\ui\settingsdialog.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\plugin_definitions.h" />
+    <ClInclude Include="..\include\teamlog\logtypes.h" />
+    <ClInclude Include="..\include\teamspeak\clientlib_publicdefinitions.h" />
+    <ClInclude Include="..\include\teamspeak\public_definitions.h" />
+    <ClInclude Include="..\include\teamspeak\public_errors.h" />
+    <ClInclude Include="..\include\teamspeak\public_errors_rare.h" />
+    <ClInclude Include="..\include\teamspeak\public_rare_definitions.h" />
+    <ClInclude Include="..\include\ts3_functions.h" />
     <ClInclude Include="src\bouyomi.h" />
     <ClInclude Include="src\plugin.h" />
     <ClInclude Include="src\uiadapter.h" />

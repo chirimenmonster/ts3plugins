@@ -33,6 +33,15 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Header Files\include">
+      <UniqueIdentifier>{ae28c2b3-9fa1-4c03-b3a1-5049fdbde4db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\teamspeak">
+      <UniqueIdentifier>{22867a9e-d38a-44a6-a9be-f94705fe0786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\teamlog">
+      <UniqueIdentifier>{b8d62ecf-7298-4f5d-9a0e-6b4ec07dee84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\filters.cpp">
@@ -95,6 +104,30 @@
     </ClInclude>
     <ClInclude Include="src\bouyomi.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\plugin_definitions.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ts3_functions.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\teamspeak\clientlib_publicdefinitions.h">
+      <Filter>Header Files\include\teamspeak</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\teamspeak\public_definitions.h">
+      <Filter>Header Files\include\teamspeak</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\teamspeak\public_errors.h">
+      <Filter>Header Files\include\teamspeak</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\teamspeak\public_errors_rare.h">
+      <Filter>Header Files\include\teamspeak</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\teamspeak\public_rare_definitions.h">
+      <Filter>Header Files\include\teamspeak</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\teamlog\logtypes.h">
+      <Filter>Header Files\include\teamlog</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
