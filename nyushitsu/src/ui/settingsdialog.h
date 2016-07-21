@@ -3,6 +3,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_settingsdialog.h"
+#include "../storage.h"
 
 class SettingsDialog : public QMainWindow
 {
@@ -18,7 +19,8 @@ private slots:
 
 private:
 	Ui::SettingsDialogClass ui;
-	void readConfig();
+	void readConfig(void);
+	void applyConfigToCheckBox(config_t *srcConfig);
 };
 
 #endif // SETTINGSDIALOG_H

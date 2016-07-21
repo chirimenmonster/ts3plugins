@@ -21,15 +21,15 @@ static TCHAR wConfigFile[MAX_PATH];
 config_t config;
 
 /* デフォルト設定値 */
-void config_default(void)
+void config_getDefault(config_t *ptr)
 {
 	/* デフォルト設定 */
-	config.versionMajor = SETTINGS_VERSION_MAJOR;
-	config.versionMinor = SETTINGS_VERSION_MINOR;
-	config.enableVoiceOnMove = 1;
-	config.enableVoiceOnChat = 0;
-	config.enableNicknameFilter = 1;
-	config.enableWatchOtherRoom = 0;
+	ptr->versionMajor = SETTINGS_VERSION_MAJOR;
+	ptr->versionMinor = SETTINGS_VERSION_MINOR;
+	ptr->enableVoiceOnMove = 1;
+	ptr->enableVoiceOnChat = 0;
+	ptr->enableNicknameFilter = 1;
+	ptr->enableWatchOtherRoom = 0;
 }
 
 /* 設定ファイルルーチン群の初期設定 */
@@ -45,7 +45,7 @@ int config_init(char *configPath)
 	logMessage("Config File: %ws", wConfigFile);
 
 	/* デフォルト設定の取得 */
-	config_default();
+	config_getDefault(&config);
 
 	return 0;
 }
