@@ -67,7 +67,7 @@ const char* ts3plugin_name() {
 	/* TeamSpeak expects UTF-8 encoded characters. Following demonstrates a possibility how to convert UTF-16 wchar_t into UTF-8. */
 	static char* result = NULL;  /* Static variable so it's allocated only once */
 	if(!result) {
-		const wchar_t* name = L"Nyushitsu Plugin";
+		const wchar_t* name = TEXT(PLUGIN_NAME);
 		if(wcharToUtf8(name, &result) == -1) {  /* Convert name into UTF-8 encoded result */
 			result = PLUGIN_NAME;  /* Conversion failed, fallback here */
 		}
