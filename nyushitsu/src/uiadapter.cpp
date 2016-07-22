@@ -4,6 +4,8 @@
 #include "ui/settingsdialog.h"
 #include "uiadapter.h"
 
+#define DIALOG_TITLE	"Nyushitsu Settings"
+
 static SettingsDialog *dialog = NULL;
 
 static QWidget* getMainWindowWidget()
@@ -20,6 +22,7 @@ static void dialog_init()
 {
 	if (!dialog) {
 		dialog = new SettingsDialog(getMainWindowWidget());
+		dialog->setWindowTitle(DIALOG_TITLE);
 	}
 }
 
