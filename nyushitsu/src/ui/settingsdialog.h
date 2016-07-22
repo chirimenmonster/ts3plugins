@@ -13,6 +13,9 @@ public:
 	SettingsDialog(QWidget *parent = 0);
 	~SettingsDialog();
 
+public slots:
+	void show();
+
 private slots:
 	void accept();
 	void reset();

@@ -11,12 +11,17 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
-	readConfig();
 }
 
 SettingsDialog::~SettingsDialog()
 {
 
+}
+
+void SettingsDialog::show()
+{
+	readConfig();
+	QWidget::show();
 }
 
 void SettingsDialog::accept()

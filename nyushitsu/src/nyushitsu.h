@@ -28,6 +28,7 @@ void nyushitsu_writeConfig(void);
 
 void nyushitsu_configDialog(void *qParentWidget);
 void nyushitsu_showDialog(void);
+void nyushitsu_deleteDialog(void);
 
 #ifdef __cplusplus
 }

@@ -6,7 +6,8 @@
 
 static SettingsDialog *dialog = NULL;
 
-static QWidget* getMainWindowWidget() {
+static QWidget* getMainWindowWidget()
+{
 	foreach(QWidget *widget, QApplication::topLevelWidgets()) {
 		if (widget->isWindow() && widget->inherits("QMainWindow") && !widget->windowTitle().isEmpty()) {
 			return widget;
@@ -15,22 +16,33 @@ static QWidget* getMainWindowWidget() {
 	return NULL;
 }
 
+static void dialog_init()
+{
+	if (!dialog) {
+		dialog = new SettingsDialog(getMainWindowWidget());
+	}
+}
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 
-void adapter_configure(void* qParentWidget) {
+void adapter_configure(void* qParentWidget)
+{
 	// dialog = new SettingsDialog((QWidget *)qParentWidget);
 }
 
-void adapter_show() {
-	char msg[1024];
-
-	dialog = new SettingsDialog(getMainWindowWidget());
-	dialog->setAttribute(Qt::WA_DeleteOnClose);
+void adapter_show()
+{
+	dialog_init();
+	//dialog->setAttribute(Qt::WA_DeleteOnClose);
 	dialog->show();
+}
+
+void adapter_delete()
+{
+	delete dialog;
 }
 
 

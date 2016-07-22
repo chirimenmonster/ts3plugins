@@ -115,3 +115,8 @@ void nyushitsu_showDialog(void)
 {
 	adapter_show();
 }
+
+void nyushitsu_deleteDialog(void)
+{
+	adapter_delete();
+}

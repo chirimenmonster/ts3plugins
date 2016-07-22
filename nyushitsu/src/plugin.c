@@ -141,6 +141,7 @@ void ts3plugin_shutdown() {
     printf("PLUGIN: shutdown\n");
 
 	nyushitsu_writeConfig();
+	nyushitsu_deleteDialog();
 
 	/*
 	 * Note:
