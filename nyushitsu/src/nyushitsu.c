@@ -70,11 +70,16 @@ void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myCh
 	bouyomi_sendMessage(msg);
 }
 
-void nyushitsu_sendChatMessage(const char *fromName, const char *message)
+void nyushitsu_sendChatMessage(const char *fromName, const char *message, UINT64 fromID, UINT64 myID)
 {
 	char fromName_filtered[MAX_NICKNAME];
+	char message_filtered[MAX_TEXTCHAT];
 
 	if (!config.enableVoiceOnChat) {
+		return;
+	}
+
+	if (!config.enableMyMessage && fromID == myID) {
 		return;
 	}
 
@@ -82,6 +87,11 @@ void nyushitsu_sendChatMessage(const char *fromName, const char *message)
 		filter_strip(fromName, fromName_filtered, sizeof(fromName_filtered));
 		logMessage("replace nickname: %s -> %s", fromName, fromName_filtered);
 		fromName = fromName_filtered;
+	}
+
+	if (config.enableTextChatFilter) {
+		filter_textchat(message, message_filtered, sizeof(message_filtered));
+		message = message_filtered;
 	}
 
 	char msg[MAX_BOUYOMIMSG];

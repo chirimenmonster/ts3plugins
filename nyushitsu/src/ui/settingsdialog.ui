@@ -46,6 +46,20 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="checkBox_enableMyMessage">
+        <property name="text">
+         <string>読み上げに自分のチャットを含める</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_enableTextChatFilter">
+        <property name="text">
+         <string>テキストチャットのフィルタを有効にする</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>

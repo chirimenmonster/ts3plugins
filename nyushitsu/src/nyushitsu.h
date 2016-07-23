@@ -14,6 +14,9 @@
 #define MAX_BOUYOMICMD		1024
 #define MAX_BOUYOMIMSG		(MAX_BOUYOMICMD - BOUYOMI_HEADERSIZE)
 
+/* テキストチャットの最大サイズ (バイト) */
+#define MAX_TEXTCHAT		140
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,7 +24,7 @@ extern "C" {
 void logMessage(const char *format, ...);
 
 void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myChannelID, const char *nickname);
-void nyushitsu_sendChatMessage(const char *fromName, const char *message);
+void nyushitsu_sendChatMessage(const char *fromName, const char *message, UINT64 fromID, UINT64 myID);
 
 void nyushitsu_readConfig(char *configPath);
 void nyushitsu_writeConfig(void);

@@ -353,9 +353,16 @@ void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID, anyID cl
 	}
 }
 
-int  ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID targetMode, anyID toID, anyID fromID, const char* fromName, const char* fromUniqueIdentifier, const char* message, int ffIgnored)
-{
-	nyushitsu_sendChatMessage(fromName, message);
+int  ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID targetMode, anyID toID, anyID fromID, const char* fromName, const char* fromUniqueIdentifier, const char* message, int ffIgnored) {
+	anyID myID;
+
+	// 自分の ID を取得
+	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok) {
+		logMessage("fail to getClientID");
+		return -1;
+	}
+
+	nyushitsu_sendChatMessage(fromName, message, fromID, myID);
 	return 0;
 }
 

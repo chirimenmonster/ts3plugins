@@ -14,6 +14,8 @@ typedef struct {
 	int enableVoiceOnChat;
 	int enableNicknameFilter;
 	int enableWatchOtherRoom;
+	int enableTextChatFilter;
+	int enableMyMessage;
 } config_t;
 
 extern config_t config;

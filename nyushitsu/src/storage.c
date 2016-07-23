@@ -14,6 +14,8 @@
 #define CONFIG_ENABLE_VOICE_ON_CHAT		L"enable_voice_on_chat"
 #define CONFIG_ENABLE_NICKNAME_FILTER	L"enable_nickname_filter"
 #define CONFIG_ENABLE_WATCH_OTHER_ROOM	L"enable_watch_other_room"
+#define CONFIG_ENABLE_TEXTCHAT_FILTER	L"enable_textchat_filter"
+#define CONFIG_ENABLE_MYMESSAGE			L"enable_mymessage"
 
 static SOCKET sock;
 static TCHAR wConfigFile[MAX_PATH];
@@ -30,6 +32,8 @@ void config_getDefault(config_t *ptr)
 	ptr->enableVoiceOnChat = 0;
 	ptr->enableNicknameFilter = 1;
 	ptr->enableWatchOtherRoom = 0;
+	ptr->enableTextChatFilter = 1;
+	ptr->enableMyMessage = 0;
 }
 
 /* 設定ファイルルーチン群の初期設定 */
@@ -68,6 +72,8 @@ int config_read(void)
 	config.enableVoiceOnChat	= GetPrivateProfileInt(PROFNAME, CONFIG_ENABLE_VOICE_ON_CHAT,		config.enableVoiceOnChat,		wConfigFile);
 	config.enableNicknameFilter	= GetPrivateProfileInt(PROFNAME, CONFIG_ENABLE_NICKNAME_FILTER,		config.enableNicknameFilter,	wConfigFile);
 	config.enableWatchOtherRoom	= GetPrivateProfileInt(PROFNAME, CONFIG_ENABLE_WATCH_OTHER_ROOM,	config.enableWatchOtherRoom,	wConfigFile);
+	config.enableTextChatFilter = GetPrivateProfileInt(PROFNAME, CONFIG_ENABLE_TEXTCHAT_FILTER,		config.enableTextChatFilter,	wConfigFile);
+	config.enableMyMessage		= GetPrivateProfileInt(PROFNAME, CONFIG_ENABLE_MYMESSAGE,			config.enableMyMessage,			wConfigFile);
 
 	return 0;
 }
@@ -91,6 +97,8 @@ int config_write(void)
 	WritePrivateProfileInt(PROFNAME, CONFIG_ENABLE_VOICE_ON_CHAT,		config.enableVoiceOnChat,		wConfigFile);
 	WritePrivateProfileInt(PROFNAME, CONFIG_ENABLE_NICKNAME_FILTER,		config.enableNicknameFilter,	wConfigFile);
 	WritePrivateProfileInt(PROFNAME, CONFIG_ENABLE_WATCH_OTHER_ROOM,	config.enableWatchOtherRoom,	wConfigFile);
+	WritePrivateProfileInt(PROFNAME, CONFIG_ENABLE_TEXTCHAT_FILTER,		config.enableTextChatFilter,	wConfigFile);
+	WritePrivateProfileInt(PROFNAME, CONFIG_ENABLE_MYMESSAGE,			config.enableMyMessage,			wConfigFile);
 
 	logMessage("write config file");
 
