@@ -16,6 +16,7 @@
 #define CONFIG_ENABLE_WATCH_OTHER_ROOM	L"enable_watch_other_room"
 #define CONFIG_ENABLE_TEXTCHAT_FILTER	L"enable_textchat_filter"
 #define CONFIG_ENABLE_MYMESSAGE			L"enable_mymessage"
+#define CONFIG_ENABLE_COOLDOWN_TIMER	L"enable_cooldown_timer"
 
 static SOCKET sock;
 static TCHAR wConfigFile[MAX_PATH];
@@ -34,6 +35,7 @@ void config_getDefault(config_t *ptr)
 	ptr->enableWatchOtherRoom = 0;
 	ptr->enableTextChatFilter = 1;
 	ptr->enableMyMessage = 0;
+	ptr->enableCooldownTimer = 1;
 }
 
 /* 設定ファイルルーチン群の初期設定 */
@@ -74,6 +76,7 @@ int config_read(void)
 	config.enableWatchOtherRoom	= GetPrivateProfileInt(PROFNAME, CONFIG_ENABLE_WATCH_OTHER_ROOM,	config.enableWatchOtherRoom,	wConfigFile);
 	config.enableTextChatFilter = GetPrivateProfileInt(PROFNAME, CONFIG_ENABLE_TEXTCHAT_FILTER,		config.enableTextChatFilter,	wConfigFile);
 	config.enableMyMessage		= GetPrivateProfileInt(PROFNAME, CONFIG_ENABLE_MYMESSAGE,			config.enableMyMessage,			wConfigFile);
+	config.enableCooldownTimer	= GetPrivateProfileInt(PROFNAME, CONFIG_ENABLE_COOLDOWN_TIMER,		config.enableCooldownTimer,		wConfigFile);
 
 	return 0;
 }
@@ -99,6 +102,7 @@ int config_write(void)
 	WritePrivateProfileInt(PROFNAME, CONFIG_ENABLE_WATCH_OTHER_ROOM,	config.enableWatchOtherRoom,	wConfigFile);
 	WritePrivateProfileInt(PROFNAME, CONFIG_ENABLE_TEXTCHAT_FILTER,		config.enableTextChatFilter,	wConfigFile);
 	WritePrivateProfileInt(PROFNAME, CONFIG_ENABLE_MYMESSAGE,			config.enableMyMessage,			wConfigFile);
+	WritePrivateProfileInt(PROFNAME, CONFIG_ENABLE_COOLDOWN_TIMER,		config.enableCooldownTimer,		wConfigFile);
 
 	logMessage("write config file");
 

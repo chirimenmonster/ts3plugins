@@ -5,7 +5,7 @@ extern "C" {
 #endif
 
 #define SETTINGS_VERSION_MAJOR	1
-#define SETTINGS_VERSION_MINOR	0
+#define SETTINGS_VERSION_MINOR	1
 
 typedef struct {
 	int versionMajor;
@@ -16,6 +16,7 @@ typedef struct {
 	int enableWatchOtherRoom;
 	int enableTextChatFilter;
 	int enableMyMessage;
+	int enableCooldownTimer;
 } config_t;
 
 extern config_t config;

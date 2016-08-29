@@ -13,11 +13,14 @@
 #include "bouyomi.h"
 
 
-/* 読み上げメッセージを選択して送信 */
+/* 入退出時のイベントに対応する読み上げメッセージを選択して送信 */
 void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myChannelID, const char* nickname)
 {
 	char nickname_filtered[MAX_NICKNAME];
 	char* template;
+	static time_t timePrev = 0;
+	time_t timeCooldown = 30;	/* 秒 */
+	static int countUsers = 0;
 
 	if (!config.enableVoiceOnMove) {
 		return;
@@ -58,6 +61,25 @@ void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myCh
         }        
     }
 
+	/* 冷却期間のチェック */
+	if (config.enableCooldownTimer) {
+		time_t timeCurrent = time(NULL);
+		time_t timeEnable = timePrev + timeCooldown;
+		timePrev = timeCurrent;
+		if (timeCurrent <= timeEnable) {
+			countUsers++;
+			logMessage("increment count users: %d", countUsers);
+		}
+		else {
+			countUsers = 0;
+			logMessage("reset count users: %d", countUsers);
+		}
+		if (countUsers > 1) {
+			logMessage("count users: %d", countUsers);
+			return;
+		}
+	}
+
 	if (config.enableNicknameFilter) {
 		filter_strip(nickname, nickname_filtered, sizeof(nickname_filtered));
 		logMessage("replace nickname: %s -> %s", nickname, nickname_filtered);
@@ -70,6 +92,7 @@ void nyushitsu_sendMessage(UINT64 oldChannelID, UINT64 newChannelID, UINT64 myCh
 	bouyomi_sendMessage(msg);
 }
 
+/* テキストチャットを読み上げメッセージとして送信 */
 void nyushitsu_sendChatMessage(const char *fromName, const char *message, UINT64 fromID, UINT64 myID)
 {
 	char fromName_filtered[MAX_NICKNAME];
