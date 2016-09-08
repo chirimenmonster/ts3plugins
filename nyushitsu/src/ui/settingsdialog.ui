@@ -60,6 +60,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="checkBox_enableCooldownTimer">
+        <property name="text">
+         <string>短時間で移動者が連続した場合の読み上げを省略する</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>

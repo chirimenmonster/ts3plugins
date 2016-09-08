@@ -32,6 +32,7 @@ void SettingsDialog::accept()
 	config.enableWatchOtherRoom		= ui.checkBox_enableWatchOtherRoom	->isChecked();
 	config.enableTextChatFilter		= ui.checkBox_enableTextChatFilter	->isChecked();
 	config.enableMyMessage			= ui.checkBox_enableMyMessage		->isChecked();
+	config.enableCooldownTimer		= ui.checkBox_enableCooldownTimer	->isChecked();
 }
 
 // checkbox の内容をデフォルト設定にする
@@ -58,4 +59,5 @@ void SettingsDialog::applyConfigToCheckBox(config_t *srcConfig)
 	ui.checkBox_enableWatchOtherRoom	->setChecked(srcConfig->enableWatchOtherRoom);
 	ui.checkBox_enableTextChatFilter	->setChecked(srcConfig->enableTextChatFilter);
 	ui.checkBox_enableMyMessage			->setChecked(srcConfig->enableMyMessage);
+	ui.checkBox_enableCooldownTimer		->setChecked(srcConfig->enableCooldownTimer);
 }
