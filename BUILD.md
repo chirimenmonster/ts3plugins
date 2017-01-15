@@ -12,7 +12,7 @@
 ### 手順
 1. ファイルを適当なフォルダに展開する
 2. 「開発者コマンドプロンプト」を起動する (msbuild へのパスを手動で通してもよい)
-3. フォルダツリーの ts2plugins\nyushitsu に移動する
+3. フォルダツリーの ts3plugins\nyushitsu に移動する
 4. msbuild nyushitsu_plugin.msbuild を実行する
 5. output フォルダに配布用パッケージ nyushitsu_plugin.zip が作成される
 
