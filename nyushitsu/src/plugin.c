@@ -175,8 +175,8 @@ int ts3plugin_offersConfigure() {
 
 /* Plugin might offer a configuration window. If ts3plugin_offersConfigure returns 0, this function does not need to be implemented. */
 void ts3plugin_configure(void* handle, void* qParentWidget) {
-	nyushitsu_configDialog(qParentWidget);
 	printf("PLUGIN: configure\n");
+	nyushitsu_showDialog();
 }
 
 /*
