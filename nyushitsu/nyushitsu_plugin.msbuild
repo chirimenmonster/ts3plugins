@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <PropertyGroup>
-        <ExtensionTasksPath>c:\Program Files\MSBuild\ExtensionPack\4.0\</ExtensionTasksPath>
-    </PropertyGroup>
-    <Import Project="$(ExtensionTasksPath)MSBuild.ExtensionPack.tasks" />
-    
     <Target Name="Build">
         <PropertyGroup>
             <AppName>nyushitsu_plugin</AppName>
@@ -34,15 +29,16 @@
             <TS3PluginResources Include="$(ResourceDir)\data\**" />
         </ItemGroup>
         <Copy SourceFiles="@(TS3PluginResources)" DestinationFolder="$(PluginDir)\%(RecursiveDir)" />
-        <ItemGroup>
-            <TS3Files Include="$(PackageDir)\**" />
-        </ItemGroup>
-        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="@(TS3Files)" RemoveRoot="$(PackageDir)"
-            ZipFileName="$(DistributionDir)\$(AppName).ts3_plugin" />
-        <ItemGroup>
-            <DistributionFiles Include="$(DistributionDir)\**" />
-        </ItemGroup>
-        <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="@(DistributionFiles)" RemoveRoot="$(DistributionDir)"
-            ZipFileName="$(OutputDir)\$(AppName).zip" />
+
+        <ZipDirectory
+            SourceDirectory="$(PackageDir)"
+            DestinationFile="$(DistributionDir)\$(AppName).ts3_plugin"
+            Overwrite="true"
+        />
+        <ZipDirectory
+            SourceDirectory="$(DistributionDir)"
+            DestinationFile="$(OutputDir)\$(AppName).zip"
+            Overwrite="true"
+        />
     </Target>
 </Project>
