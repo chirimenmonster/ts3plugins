@@ -12,7 +12,7 @@
 
 ### 手順
 1. この git リポジトリ (ts3plugins) をクローンする
-2. フォルダ ts3plugins\ts3client-pluginsdk で git submodule update を実行する (TS3 Client Plugin SDK を取得する)
+2. フォルダ ts3plugins で git submodule update -i を実行する (TS3 Client Plugin SDK を取得する)
 2. Developer Command Prompt for VS 2019 を起動する (msbuild へのパスを手動で通してもよい)
 3. フォルダ ts3plugins\nyushitsu に移動する
 4. msbuild nyushitsu_plugin.msbuild を実行する
