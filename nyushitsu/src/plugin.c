@@ -1,10 +1,10 @@
 ﻿/*
  * TeamSpeak 3 demo plugin
  *
- * Copyright (c) 2008-2016 TeamSpeak Systems GmbH
+ * Copyright (c) TeamSpeak Systems GmbH
  */
 
-#ifdef _WIN32
+#if defined(WIN32) || defined(__WIN32__) || defined(_WIN32)
 #pragma warning (disable : 4100)  /* Disable Unreferenced parameter warning */
 #include <Windows.h>
 #endif
@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
 #include "teamspeak/public_errors.h"
 #include "teamspeak/public_errors_rare.h"
 #include "teamspeak/public_definitions.h"
@@ -165,17 +164,17 @@ void ts3plugin_shutdown() {
 int ts3plugin_offersConfigure() {
 	printf("PLUGIN: offersConfigure\n");
 	/*
-	* Return values:
-	* PLUGIN_OFFERS_NO_CONFIGURE         - Plugin does not implement ts3plugin_configure
-	* PLUGIN_OFFERS_CONFIGURE_NEW_THREAD - Plugin does implement ts3plugin_configure and requests to run this function in an own thread
-	* PLUGIN_OFFERS_CONFIGURE_QT_THREAD  - Plugin does implement ts3plugin_configure and requests to run this function in the Qt GUI thread
-	*/
+	 * Return values:
+	 * PLUGIN_OFFERS_NO_CONFIGURE         - Plugin does not implement ts3plugin_configure
+	 * PLUGIN_OFFERS_CONFIGURE_NEW_THREAD - Plugin does implement ts3plugin_configure and requests to run this function in an own thread
+	 * PLUGIN_OFFERS_CONFIGURE_QT_THREAD  - Plugin does implement ts3plugin_configure and requests to run this function in the Qt GUI thread
+	 */
 	return PLUGIN_OFFERS_CONFIGURE_QT_THREAD;  /* In this case ts3plugin_configure does not need to be implemented */
 }
 
 /* Plugin might offer a configuration window. If ts3plugin_offersConfigure returns 0, this function does not need to be implemented. */
 void ts3plugin_configure(void* handle, void* qParentWidget) {
-	printf("PLUGIN: configure\n");
+    printf("PLUGIN: configure\n");
 	nyushitsu_showDialog();
 }
 
@@ -262,10 +261,10 @@ void ts3plugin_initMenus(struct PluginMenuItem*** menuItems, char** menuIcon) {
 	 * Specify an optional icon for the plugin. This icon is used for the plugins submenu within context and main menus
 	 * If unused, set menuIcon to NULL
 	 */
-     /*
+	/*
 	*menuIcon = (char*)malloc(PLUGIN_MENU_BUFSZ * sizeof(char));
 	_strcpy(*menuIcon, PLUGIN_MENU_BUFSZ, "t.png");
-    */
+	*/
 
 	/*
 	 * Menus can be enabled or disabled with: ts3Functions.setPluginMenuEnabled(pluginID, menuID, 0|1);
@@ -370,7 +369,7 @@ int  ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID target
 
 /*
  * Called when a plugin menu item (see ts3plugin_initMenus) is triggered. Optional function, when not using plugin menus, do not implement this.
- * 
+ *
  * Parameters:
  * - serverConnectionHandlerID: ID of the current server tab
  * - type: Type of the menu (PLUGIN_MENU_TYPE_CHANNEL, PLUGIN_MENU_TYPE_CLIENT or PLUGIN_MENU_TYPE_GLOBAL)
@@ -379,7 +378,6 @@ int  ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID target
  */
 void ts3plugin_onMenuItemEvent(uint64 serverConnectionHandlerID, enum PluginMenuType type, int menuItemID, uint64 selectedItemID) {
 	printf("PLUGIN: onMenuItemEvent: serverConnectionHandlerID=%llu, type=%d, menuItemID=%d, selectedItemID=%llu\n", (long long unsigned int)serverConnectionHandlerID, type, menuItemID, (long long unsigned int)selectedItemID);
-
 	switch(type) {
 		case PLUGIN_MENU_TYPE_GLOBAL:
 			/* Global menu item was triggered. selectedItemID is unused and set to zero. */
@@ -387,11 +385,10 @@ void ts3plugin_onMenuItemEvent(uint64 serverConnectionHandlerID, enum PluginMenu
 				case MENU_ID_GLOBAL_1:
 					/* Menu global 1 was triggered */
 					nyushitsu_showDialog();
-                    break;
+					break;
 				default:
 					break;
 			}
-
 			break;
 		case PLUGIN_MENU_TYPE_CHANNEL:
 			/* Channel contextmenu item was triggered. selectedItemID is the channelID of the selected channel */

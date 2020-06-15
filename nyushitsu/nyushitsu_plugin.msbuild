@@ -9,7 +9,19 @@
             <PackageDir>$(OutputDir)\package</PackageDir>
             <PluginDir>$(PackageDir)\plugins</PluginDir>
             <DistributionDir>$(OutputDir)\distribution</DistributionDir>
+            <PluginVersionHeaderFile>$(MSBuildProjectDirectory)\src\nyushitsu.h</PluginVersionHeaderFile>
         </PropertyGroup>
+
+        <ReadLinesFromFile File="$(PluginVersionHeaderFile)">
+            <Output TaskParameter="Lines" PropertyName="PluginHeaderRecords" />
+        </ReadLinesFromFile>        
+        <PropertyGroup>
+            <PluginVersion>$([System.Text.RegularExpressions.Regex]::Match($(PluginHeaderRecords),
+                     '#define\s+PLUGIN_VERSION\s+\"(\d+\.\d+\.\d+)\"').Groups[1].Value)</PluginVersion>
+            <PluginFile>$(AppName).ts3_plugin</PluginFile>
+            <PackageFile>$(AppName)-$(PluginVersion).zip</PackageFile>
+        </PropertyGroup>
+
         <MSBuild Targets="TransformAll" Projects="$(MSBuildProjectDirectory)\resources\resources.csproj" />
         <MSBuild Targets="Build" Projects="$(MSBuildProjectDirectory)\nyushitsu_plugin.vcxproj"
             Properties="Configuration=Release;Platform=x64;OutDir=$(BuildDir)\" />
@@ -32,12 +44,12 @@
 
         <ZipDirectory
             SourceDirectory="$(PackageDir)"
-            DestinationFile="$(DistributionDir)\$(AppName).ts3_plugin"
+            DestinationFile="$(DistributionDir)\$(PluginFile)"
             Overwrite="true"
         />
         <ZipDirectory
             SourceDirectory="$(DistributionDir)"
-            DestinationFile="$(OutputDir)\$(AppName).zip"
+            DestinationFile="$(OutputDir)\$(PackageFile)"
             Overwrite="true"
         />
     </Target>
