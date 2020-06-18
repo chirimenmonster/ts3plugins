@@ -9,13 +9,11 @@
             <PackageDir>$(OutputDir)\package</PackageDir>
             <PluginDir>$(PackageDir)\plugins</PluginDir>
             <DistributionDir>$(OutputDir)\distribution</DistributionDir>
-            <PluginVersionHeaderFile>$(MSBuildProjectDirectory)\src\nyushitsu.h</PluginVersionHeaderFile>
         </PropertyGroup>
 
-        <ReadLinesFromFile File="$(PluginVersionHeaderFile)">
-            <Output TaskParameter="Lines" PropertyName="PluginHeaderRecords" />
-        </ReadLinesFromFile>        
         <PropertyGroup>
+            <PluginVersionHeaderFile>$(MSBuildProjectDirectory)\src\nyushitsu.h</PluginVersionHeaderFile>
+            <PluginHeaderRecords>$([System.IO.File]::ReadAllText($(PluginVersionHeaderFile)))</PluginHeaderRecords>
             <PluginVersion>$([System.Text.RegularExpressions.Regex]::Match($(PluginHeaderRecords),
                      '#define\s+PLUGIN_VERSION\s+\"(\d+\.\d+\.\d+)\"').Groups[1].Value)</PluginVersion>
             <PluginFile>$(AppName).ts3_plugin</PluginFile>
